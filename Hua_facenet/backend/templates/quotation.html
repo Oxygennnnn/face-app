@@ -1,0 +1,49 @@
+<html>
+    <title>
+        实时数据测试
+    </title>
+    <head>
+    </head>
+    <body>
+        <table id="data-table" border="1">    
+        </table>
+        <script>
+            // 创建 WebSocket 连接
+            const ws = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/future/quotation/'
+            );
+
+            // 接收到信息
+            ws.onmessage = function (e) {
+                var data = JSON.parse(e.data).message;
+                var table = document.getElementById('data-table');
+                html = "<tr><th>合约</th><th>今开</th><th>最高</th><th>最低</th><th>昨收</th><th>买入</th><th>卖出</th><th>现价</th><th>动态结算</th><th>昨日结算</th><th>买量</th><th>卖量</th><th>持仓量</th><th>成交量</th></tr>";
+                for (var i = 0; i < data.length; i++) {
+                    html += "<tr>";
+                    for (var j = 0; j < data[i].length; j++) {
+                        html += "<td>" + data[i][j] + "</td>";
+                    }
+                    html += "</tr>";
+                }
+                table.innerHTML = html;
+            };
+
+            // 连接发生错误时打印错误信息
+            ws.onerror = function (e) {
+                console.error(e.data);
+            };
+
+            // 连接成功建立时触发
+            ws.onopen = function (e) {
+                console.log('Connection to server opened');
+            };
+
+            // 连接关闭时触发
+            ws.onclose = function (e) {
+                console.log('Connection to server closed');
+            };
+        </script>
+    </body>
+</html>
